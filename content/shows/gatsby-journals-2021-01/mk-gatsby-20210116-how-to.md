@@ -400,6 +400,7 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
   - filename
 - what happens on name collisions? (i.e. a `resources` folder in pages with identical file name? or if there is a page-1.js AND a page-1.mdx in `pages` . . . . or a `this-resource.md` and `this-resource.mdx` somewhere in the content folder?)
 - create index (commented-out template in `src/pages/resource-index.js`)
+- open links in new tabs. check out [gatsby-remark-external-links](https://www.gatsbyjs.com/plugins/gatsby-remark-external-links/)
 
 
 ## MODULAR BITS AND PIECES

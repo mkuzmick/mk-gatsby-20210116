@@ -83,10 +83,8 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
     reporter.panicOnBuild('🚨  ERROR: Loading "createPages" query')
   }
 
-  // Create blog post pages.
   const mdx = mdxResult.data.allMdx.edges
 
-  // you'll call `createPage` for each mdxResult
   mdx.forEach(({ node }, index) => {
     console.log(`creating page for id ${node.id} with slug ${node.fields.slug} with initial h1 of ${node.headings[0].value}`)
     createPage({
@@ -100,4 +98,51 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
       context: { id: node.id },
     })
   })
+
+  const mdResult = await graphql(`
+    query {
+      allMarkdownRemark {
+        edges {
+          node {
+            id
+            fields {
+              slug
+              title
+              pageType
+            }
+            headings(depth: h1) {
+              value
+            }
+          }
+        }
+      }
+    }
+  `)
+  
+
+
+  console.log(JSON.stringify(mdResult, null, 4))
+  if (mdResult.errors) {
+    reporter.panicOnBuild('🚨  ERROR: Loading "createPages" query')
+  }
+
+  const theMd = mdResult.data.allMarkdownRemark.edges
+
+  theMd.forEach(({ node }, index) => {
+    console.log(`creating page for id ${node.id} with slug ${node.fields.slug} with initial h1 of ${(node.headings[0] ? node.headings[0].value : "no heading")}`)
+    createPage({
+      // This is the slug you created before
+      // (or `node.frontmatter.slug`)
+      path: node.fields.slug,
+      // This component will wrap our MDX content
+      component: path.resolve(`./src/components/templates/glossary-template-md.js`),
+      // You can use the values in this context in
+      // our page layout component
+      context: { id: node.id, slug: node.fields.slug },
+    })
+  })
+
+
+
+
 }
