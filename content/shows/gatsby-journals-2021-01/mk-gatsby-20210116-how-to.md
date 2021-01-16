@@ -1,6 +1,6 @@
 ---
-title: MK Gatsby HowTo for 20210116
-author: Marlon Kuzmick
+title: "MK Gatsby HowTo for 20210116"
+author: "Marlon Kuzmick"
 date: 2021-01-16
 ---
 
@@ -11,7 +11,6 @@ date: 2021-01-16
 to create this, starting 7:33
 
 ### START THE PROJECT AND REPO
-
 - we now have the initial build and github repo going with a script like so
 
   ```
@@ -107,8 +106,6 @@ to create this, starting 7:33
 
 ### ADD STYLES WITH THEME-UI
 
-0:06
-
 - install [gatsby-plugin-theme-ui](https://www.gatsbyjs.com/plugins/gatsby-plugin-theme-ui/?=theme-ui) . one option =
   ```
   npm i theme-ui gatsby-plugin-theme-ui @theme-ui/presets
@@ -182,6 +179,35 @@ to create this, starting 7:33
   })
   ```
 
+
+### ADD FONTS
+
+- npm install @fontsource/prompt
+```
+npm install @fontsource/crimson-pro @fontsource/lato
+```
+* then add the import statements to your theme
+```
+import '@fontsource/crimson-pro/500.css';
+import '@fontsource/crimson-pro/400.css';
+import '@fontsource/lato/400.css';
+```
+* then add these fonts and reference them in your styles
+```
+fonts: {
+    body: "Crimson Pro, sans-serif",
+    heading: "Crimson Pro, serif",
+    monospace: "Menlo, monospace",
+  },
+styles: {
+    h1: {
+      fontFamily: "heading",
+      // etc.
+    }
+}
+```
+
+
 ### MDX LAYOUT WITH COMPONENTS
 
 - let's also add custom components to mdx following the pattern found [here](https://theme-ui.com/mdx-components).
@@ -212,22 +238,6 @@ export default props => (
 
 
   ```
-
-### ADD FONTS
-
-- npm install @fontsource/prompt
-
-- install [gatsby-plugin-web-font-loader](https://www.npmjs.com/package/gatsby-plugin-web-font-loader) or similar
-
-```
-npm install --save gatsby-plugin-web-font-loader
-```
-
-- add any google fonts in `gatsby-config.js`
-
-```
-
-```
 
 ### CREATE CONTENT FOLDERS AND PAGES FROM THEM
 
@@ -319,7 +329,53 @@ npm install --save gatsby-plugin-web-font-loader
   }
   ```
 
--
+- follow one of the docs (like [this on one creating mdx pages](https://www.gatsbyjs.com/docs/mdx/programmatically-creating-pages/)) to create some pages, or just something like
+```
+exports.createPages = async ({ graphql, actions, reporter }) => {
+  const { createPage } = actions
+  const mdxResult = await graphql(`
+    query {
+      allMdx {
+        edges {
+          node {
+            id
+            frontmatter {
+              title
+            }
+            fields {
+              slug
+              title
+              pageType
+            }
+            headings(depth: h1) {
+              value
+            }
+          }
+        }
+      }
+    }
+  `)
+
+  if (mdxResult.errors) {
+    reporter.panicOnBuild('🚨  ERROR: Loading "createPages" query')
+  }
+
+  const mdx = mdxResult.data.allMdx.edges
+  mdx.forEach(({ node }, index) => {
+    console.log(`creating page for id ${node.id} with slug ${node.fields.slug} with initial h1 of ${node.headings[0].value}`)
+    createPage({
+      // This is the slug you created before
+      // (or `node.frontmatter.slug`)
+      path: node.fields.slug,
+      // This component will wrap our MDX content
+      component: path.resolve(`./src/components/templates/resource-template.js`),
+      // You can use the values in this context in
+      // our page layout component
+      context: { id: node.id },
+    })
+  })
+}
+```
 
 ---
 
@@ -338,6 +394,41 @@ npm install --save gatsby-plugin-web-font-loader
 - make that the starter resource
 - definitely try [gatsby-theme-style-guide](https://theme-ui.com/packages/gatsby-theme-style-guide/)
 - are we grasping and using [typography.js](https://github.com/KyleAMathews/typography.js)?
+- create title field, and go with
+  - frontmatter.title
+  - first H1
+  - filename
+- what happens on name collisions? (i.e. a `resources` folder in pages with identical file name? or if there is a page-1.js AND a page-1.mdx in `pages` . . . . or a `this-resource.md` and `this-resource.mdx` somewhere in the content folder?)
+- create index (commented-out template in `src/pages/resource-index.js`)
+
+
+## MODULAR BITS AND PIECES
+* [creating more than one type of mdx page](/resources/gatsby/creating-more-than-one-type-of-mdx-page.md)
+
+
+### SOME DYNAMIC ROUTES
+for things that are "just in" and currently need to be grabbed from the server.
+* [message board comment on dynamic routes that looks ok](https://stackoverflow.com/questions/55756994/how-to-create-dynamic-route-in-gatsby)
+* 
+
+### NESTED THEME PROVIDERS
+for different sorts of mdx pages (glossary vs llmdx vs shows vs resources, etc.)
+* [some code in this basic doc on mdx layout components](https://theme-ui.com/guides/mdx-layout-components/) from the themeUI site.
+* doc that has no examples, but is literally about [Nested Theme Providers](https://theme-ui.com/guides/nested-theme-providers/)
+* [customizing MD components with just the MDX Provider](https://www.gatsbyjs.com/docs/how-to/routing/customizing-components/) — this could actually be a simpler way to go rather than the black boxes of themeUI?
+* themeUI api docs including [ThemeProvider](https://theme-ui.com/api)
+* 
+
+### ADVANCED STYLING STEPS
+* nice walkthrough of [resetting and changing the global styles](https://scottspence.com/2020/02/06/globally-style-gatsby-styled-components/) in the default starter.
+* article on [box sizing](https://css-tricks.com/box-sizing/#article-header-id-3) linked from that article
+* [nice article on using mdx](https://www.digitalocean.com/community/tutorials/gatsbyjs-mdx-in-gatsby) that covers multiple layout options.
+
+### WORKING WITH VIDEO
+main Gatsby [doc on working with video in Gatsby here](https://www.gatsbyjs.com/docs/how-to/images-and-media/working-with-video/). But there will be many steps. Should create a custom component. Also think about pathways, video-enhanced or video-based quizzes, etc.
+* [gatsby-remark-embed-video](https://www.gatsbyjs.com/plugins/gatsby-remark-embed-video/?=video) plugin
+* add transformer ffmpeg, etc.
+
 
 ## LINKS
 

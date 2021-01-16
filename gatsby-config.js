@@ -16,6 +16,13 @@ module.exports = {
     {
       resolve: `gatsby-source-filesystem`,
       options: {
+        name: `glossary`,
+        path: `${__dirname}/content/glossary`,
+      },
+    },
+    {
+      resolve: `gatsby-source-filesystem`,
+      options: {
         name: `shows`,
         path: `${__dirname}/content/shows`,
       },

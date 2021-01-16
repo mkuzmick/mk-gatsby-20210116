@@ -1,13 +1,21 @@
 import baseTheme from "@theme-ui/preset-funk"
 import { merge } from "theme-ui"
+import '@fontsource/crimson-pro/500.css';
+import '@fontsource/crimson-pro/400.css';
+import '@fontsource/lato/400.css';
 
 export default merge(baseTheme, {
   colors: {
     text: "#999",
     background: "#fff",
-    primary: "#639",
-    secondary: "#ff6347",
+    primary: "#337",
+    secondary: "#779",
     headerBackground: "rgba(0, 0, 20, .7)",
+  },
+  fonts: {
+    body: "Lato, sans-serif",
+    heading: "Crimson Pro, serif",
+    monospace: "Menlo, monospace",
   },
   fontWeights: {
     body: 400,
