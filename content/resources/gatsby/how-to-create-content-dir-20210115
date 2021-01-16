@@ -1,0 +1,84 @@
+### CREATE CONTENT FOLDERS AND PAGES FROM THEM
+
+* create the content folders (moving images from `src/images` to `content/images`) and initial files (if you don't want to just use the `src/pages` folder for all your mdx)
+    ```
+    mkdir content content/resources
+    mv src/images content/images
+    curl -o content/images/gatsby.jpg "https://i.guim.co.uk/img/media/cc5ff87a032ce6e4144e63a2a1cbe476dbc7cd5a/273_0_3253_1952/master/3253.jpg?width=620&quality=45&auto=format&fit=max&dpr=2&s=d8da5fd430d3983dc50543a44b3979d4"
+    echo "# MDX RESOURCE\ncontent goes here\n\![Gatsby](../images/gatsby.jpg)" > content/resources/sample-resource.mdx
+    echo "# MDX PAGE\ncontent goes here\n\![Gatsby](../../content/images/gatsby.jpg)" > src/pages/sample-mdx-page.mdx
+    ```
+* then in the `gatsby-config.js` let's connect the `gatsby-source-filesystem` plugin to these new folders for mdx posts and images. We'll delete or modify the current `gatsby-source-filesystem` element, and instead have these two:
+    ```
+    {
+      resolve: `gatsby-source-filesystem`,
+      options: {
+        name: `resources`,
+        path: `${__dirname}/content/resources`,
+      },
+    },
+    {
+      resolve: `gatsby-source-filesystem`,
+      options: {
+        name: `images`,
+        path: `${__dirname}/content/images`,
+      },
+    },
+    ```
+* don't forget to ensure that there's a correct path to the icon (either a new icon or the one gatsby provided, which has been moved):
+    ```
+    icon: `content/images/gatsby-icon.png`,
+    ```
+
+* create pages for md and mdx in the `content` folder.
+* add slug field (and slug values) to all md and mdx nodes in content:
+    ```
+    const { createFilePath } = require(`gatsby-source-filesystem`)
+
+    exports.onCreateNode = ({ node, getNode, actions }) => {
+        const { createNodeField } = actions
+        console.log(node.internal.type)
+        if (node.internal.type === `MarkdownRemark`) {
+            console.log(`found markdown node of type ${node.internal.type}`)
+            const fileNode = getNode(node.parent)
+            console.log(`\n`, fileNode.relativePath)
+            console.log(createFilePath({ node, getNode }))
+            const slug = createFilePath({ node, getNode })
+            const prefix = fileNode.sourceInstanceName ? fileNode.sourceInstanceName : "content"
+            createNodeField({
+                node,
+                name: `slug`,
+                value: `/${prefix}${slug}`,
+            })
+        }
+        if (node.internal.type === `Mdx`) {
+            console.log(`found mdx node of type ${node.internal.type}`)
+            const fileNode = getNode(node.parent)
+            console.log(`\n`, fileNode.relativePath)
+            console.log(createFilePath({ node, getNode }))
+            const slug = createFilePath({ node, getNode })
+            const prefix = fileNode.sourceInstanceName ? fileNode.sourceInstanceName : "content"
+            createNodeField({
+                node,
+                name: `slug`,
+                value: `/${prefix}${slug}`,
+            })
+          }
+      }
+    ```
+* then create pages for each node.
+* create an initial test layout in `src/templates/test-layout.js`
+    ```
+    import React from "react"
+    import Layout from "../components/layout"
+
+    export default function TestLayout() {
+      return (
+        <Layout>
+          <div>Hello resource layout</div>
+        </Layout>
+      )
+    }
+    ```
+* 
+
