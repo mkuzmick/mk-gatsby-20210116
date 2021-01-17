@@ -381,6 +381,11 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
 
 ## NEXT
 
+### TOMORROW
+
+
+
+### LIST OF THINGS TO CHECK OUT
 - [creating multiple different types of pages in gatsby-node.js](https://swas.io/blog/using-multiple-queries-on-gatsbyjs-createpages-node-api/)
 - add pages for content
 - add theme-ui back in
@@ -405,6 +410,9 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
 
 ## MODULAR BITS AND PIECES
 * [creating more than one type of mdx page](/resources/gatsby/creating-more-than-one-type-of-mdx-page.md)
+
+### INVENTORY OF PLACEHOLDER VIDEOS
+* Malkovich AFC Championship teaser: https://www.youtube.com/watch?v=X4OCn_YWlpg
 
 
 ### SOME DYNAMIC ROUTES

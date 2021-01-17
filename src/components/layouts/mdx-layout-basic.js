@@ -2,7 +2,11 @@ import React from "react"
 
 export default ({ children }) => (
   <div>
-    <h1>My Resource Layout</h1>
+    <div style={{
+        textAlign: "right",
+        fontSize: "1em",
+        padding: "2em"
+      }}>ll mdx tests</div>
     <div>{children}</div>
   </div>
 )
